@@ -1,0 +1,7 @@
+terraform/.terraform**
+terraform/terraform.tfstate*
+terraform/terraform.tfvars
+terraform/images/arm64/*
+terraform/images/amd64/*
+**/kubeconfig**
+**/talosconfig**

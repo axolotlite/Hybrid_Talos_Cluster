@@ -1,0 +1,27 @@
+machine:
+  kubelet:
+    nodeIP:
+      validSubnets:
+      - ${wg_cidr}
+  network:
+    interfaces:
+    - interface: wg0 # The interface name.
+      # Assigns static IP addresses to the interface.
+      addresses:
+        - ${node_ip}/${wg_subnet}
+      mtu: 1500 # The interface's MTU.
+      # Wireguard specific configuration.
+      wireguard:
+        privateKey: ${node_key} # Specifies a private key configuration (base64 encoded).
+        # Specifies a list of peer configurations to apply to a device.
+        peers:
+        - publicKey: ${controller_pub} # Specifies the public key of this peer.
+          endpoint: 127.0.0.1:${listen_port} # Specifies the endpoint of this peer entry.
+          persistentKeepaliveInterval: 5s # Specifies the persistent keepalive interval for this peer.
+          # AllowedIPs specifies a list of allowed IP addresses in CIDR notation for this peer.
+          allowedIPs:
+            - ${wg_cidr}
+
+cluster:
+    controlPlane:
+        endpoint: https://${control_node_ip}:6443

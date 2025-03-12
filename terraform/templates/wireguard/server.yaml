@@ -1,0 +1,21 @@
+machine:
+  kubelet:
+    nodeIP:
+      validSubnets:
+      - ${wg_cidr}
+  network:
+    interfaces:
+    - interface: wg0 # The interface name.
+      # Assigns static IP addresses to the interface.
+      addresses:
+        - ${control_node_ip}/${wg_subnet}
+      mtu: 1500 # The interface's MTU.
+      # Wireguard specific configuration.
+      wireguard:
+        privateKey: ${server_key} # Specifies a private key configuration (base64 encoded).
+        listenPort: ${listen_port} # Specifies a device's listening port.
+        peers: 
+          - publicKey: ${server_pub}
+            persistentKeepaliveInterval: 5s
+            allowedIPs:
+              - ${control_node_ip}/32

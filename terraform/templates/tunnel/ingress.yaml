@@ -1,0 +1,20 @@
+machine:
+  pods:
+    - apiVersion: v1
+      kind: Pod
+      metadata:
+        labels:
+          workload: tunnel
+        namespace: kube-system
+        name: ingress-tunnel
+      spec:
+        #double check if hostNetwork is needed here
+        hostNetwork: true
+        containers:
+        - image: ghcr.io/erebe/wstunnel:v10.1.9
+          name: wstunnels
+          env:
+          - name: RUST_LOG
+            value: DEBUG
+          command: ["/bin/sh", "-c", "exec /home/app/wstunnel client --http-upgrade-path-prefix '${ws_secret}' -L 'udp://${listen_port}:127.0.0.1:${listen_port}?timeout_sec=0' wss://${egress_uri}:${ws_port}"]
+        restartPolicy: Always

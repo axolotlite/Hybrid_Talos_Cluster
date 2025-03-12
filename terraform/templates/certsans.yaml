@@ -1,0 +1,10 @@
+machine:
+  certSANs:
+    - ${dns_name}
+    - ${node_ip}
+
+cluster:
+  apiServer:
+    certSANs:
+    - ${dns_name}
+    - ${node_ip}

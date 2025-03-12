@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: net-tools
+spec:
+  selector:
+    matchLabels:
+      app: net-tools
+  template:
+    metadata:
+      labels:
+        app: net-tools
+    spec:
+      containers:
+      - image: jonlabelle/network-tools
+        # securityContext:
+        #   privileged: true
+        #   capabilities:
+        #     add:
+        #       - NET_ADMIN
+        name: pod
+        command: 
+        - "/bin/sh"
+        - "-c"
+        - "sleep infinity"
+        resources: {}
