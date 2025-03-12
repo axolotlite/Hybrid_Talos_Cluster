@@ -14,6 +14,6 @@ https://community.hetzner.com/tutorials/obfuscating-wireguard-using-wstunnel
 https://github.com/jonlabelle/docker-network-tools  
 https://github.com/anotherglitchinthematrix/oci-free-tier-terraform-module  
 https://shadynagy.com/setting-up-vpn-using-wiresock-with-ubuntu-windows/  
-https://techoverflow.net/2021/07/09/  what-does-wireguard-allowedips-actually-do/  
+https://techoverflow.net/2021/07/09/what-does-wireguard-allowedips-actually-do/  
 https://dev.to/netikras/kubernetes-on-vpn-wireguard-152l  
 https://github.com/OJFord/terraform-provider-wireguard  
