@@ -43,26 +43,6 @@ resource "null_resource" "download_images" {
       xz -fdk oracle-${each.key}.raw.xz
       qemu-img convert -f raw -O qcow2 oracle-${each.key}.raw oracle-${each.key}.qcow2
       rm oracle-${each.key}.raw
-    EOT
-  }
-}
-
-resource "local_file" "images" {
-  depends_on = [ null_resource.download_images ]
-  for_each = toset(var.arch)
-  filename = "${local.build_path}/${each.key}/oracle-${each.key}.oci"
-  content = ""
-
-  lifecycle {
-    ignore_changes = all
-    replace_triggered_by = [
-      null_resource.download_images,
-    ]
-  }
-  provisioner local-exec { 
-    interpreter = ["/bin/bash" ,"-c"]
-    working_dir = "${local.build_path}/${each.key}"
-    command = <<-EOT
       tar zcf oracle-${each.key}.oci oracle-${each.key}.qcow2 image_metadata.json
     EOT
   }

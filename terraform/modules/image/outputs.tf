@@ -1,3 +1,3 @@
 output "images" {
-  value = {for arch,file in local_file.images : arch =>file.filename}
+  value = {for arch in var.arch : arch => "${path.module}/build/${var.talos_version}/${arch}/oracle-${arch}.oci" }
 }
