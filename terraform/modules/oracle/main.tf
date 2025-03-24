@@ -1,3 +1,9 @@
+locals {
+  cloud_nodes = {
+    for name,node in var.nodes: name => node
+    if node.type == "cloud"
+  }
+}
 ## Talos Image
 resource "random_id" "bucket" {
   byte_length = 8
@@ -122,7 +128,7 @@ resource "oci_core_subnet" "this" {
 
 ## VM
 resource "oci_core_instance" "nodes" {
-  for_each = var.nodes
+  for_each = local.cloud_nodes
   availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = var.compartment_ocid
   display_name        = each.key

@@ -11,7 +11,7 @@ variable "bootstrap_nodes" {
   type = bool
   default = true
 }
-variable "controlplane_ip" {
+variable "wg_controlplane_ip" {
   
 }
 variable "wg_cidr" {
@@ -22,4 +22,7 @@ variable "mtu" {
 }
 variable "wg_iface" {
   default = "wg0"
+}
+variable "wg" {
+  
 }
