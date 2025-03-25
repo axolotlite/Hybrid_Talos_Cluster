@@ -27,124 +27,137 @@ variable "compartment_ocid" {
 #Talos Configs
 variable "talos_version" {
   description = "The version of the talos image"
-  default = "1.9.4"
-}
-
-variable "worker_ips" {
-  description = "value"
-  default = []
+  type = string
+  default = "v1.9.5"
 }
 
 #Cloud Cluster Configs
 variable "cluster_name" {
   description = "The name of the cluster"
+  type = string
   default = "terraform-provisioned-cluster"
 }
-variable "cluster_endpoint" {
-  description = "The URL or IP of the k8s controlplane endpoint"
-}
 variable "cluster_url" {
-  description = "The URL of the k8s controlplane endpoint"
+  description = "The URL of the created k8s controlplane endpoint"
+  type = string
   default = ""
 }
 #Wireguard Configs
-variable "wg_cidr"{
-    description = "value"
-    default = "10.10.0.0/24"
-}
-variable "listen_port"{
-    description = "value"
-    default = "51820"
-}
-variable "control_node_ip"{
-    description = "value"
-    default = "10.10.0.1"
-}
-variable "wg_subnet"{
-    description = "value"
-    default = "24"
-}
-variable "worker_node_ips"{
-    description = "value"
-    default = ["10.10.0.100/32", "10.10.0.101/32"]
-}
 
-#Tunnel Configs
-variable "ws_secret" {
-    description = "value"
+variable "controlplane_node" {
+  description = "The name of the controlplane node as specified in cloud_nodes variable."
+  type = string
 }
-variable "ws_port" {
-    description = "value"
-    default="12345"
-}
-
-#Oracle Controlplane Instance
-variable "instance_name" {
-  description = "Name of the instance."
-  type        = string
-}
-
-variable "instance_ad_number" {
-  description = "The availability domain number of the instance. If none is provided, it will start with AD-1 and continue in round-robin."
-  default     = 1
-  type        = number
-}
-
-variable "instance_state" {
-  default     = "RUNNING"
-  description = "(Updatable) The target state for the instance. Could be set to RUNNING or STOPPED."
-  type        = string
-
-  validation {
-    condition     = contains(["RUNNING", "STOPPED"], var.instance_state)
-    error_message = "Accepted values are RUNNING or STOPPED."
+variable "cloud_nodes" {
+  description = "An object describing the oracle cloud nodes properties."
+  default = {
+    "controlplane" = {
+      role = "controlplane"
+      arch = "arm64"
+      instance_shape = "VM.Standard.A1.Flex"
+      ocpus = 4
+      memory_in_gbs = 24
+      config_patches = {
+        "templates/example_static_pod.yaml" = {
+          pod_name = "busybox"
+          container_name = "busybox"
+          image = "busybox"
+          command = "sleep 5"
+        }
+      }
+      tags = {
+        type = "cloud"
+        role = "controlplane"
+      }
+    }
   }
+  type = map(object({
+    arch = string
+    role = string
+    instance_shape = string
+    ocpus = number
+    memory_in_gbs = number
+    config_patches = optional(map(map(string)),{})
+    tags = optional(map(string))
+  }))
 }
-
-variable "assign_public_ip" {
-  default     = false
-  description = "Whether the VNIC should be assigned a public IP address."
-  type        = bool
+variable "onprem_nodes" {
+  description = "An object describing the locally accessible nodes properties."
+  default = {
+    "home" = {
+      role = "worker"
+      public_ip = "192.168.1.2"
+      config_patches = {
+        "templates/example_static_pod.yaml" = {
+          pod_name = "busybox"
+          container_name = "busybox"
+          image = "busybox"
+          command = "sleep 5"
+        }
+      }
+    }
+  }
+  type = map(object({
+    role = string
+    public_ip = string
+    config_patches = optional(map(map(string)),{})
+    tags = optional(map(string))
+  }))
 }
-
+variable "wg_controlplane_adderess"{
+    description = "The address of the controlplane endpoint in the wireguard interface."
+    default = null
+}
+#Oracle Controlplane Instance
 variable "availability_domain" {
-  default     = 3
-  description = "Availability Domain of the instance"
-  type        = number
-}
-
-variable "instance_shape" {
-  default     = "VM.Standard.A1.Flex"
-  description = "The shape of an instance."
-  type        = string
-}
-
-variable "instance_ocpus" {
   default     = 1
-  description = "Number of OCPUs"
-  type        = number
-}
-
-variable "instance_shape_config_memory_in_gbs" {
-  default     = 6
-  description = "Amount of Memory (GB)"
-  type        = number
-}
-
-variable "instance_source_type" {
-  default     = "image"
-  description = "The source type for the instance."
-  type        = string
-}
-
-variable "boot_volume_size_in_gbs" {
-  default     = "50"
-  description = "Boot volume size in GBs"
+  description = "Availability Domain of the oracle instances."
   type        = number
 }
 #image
 variable "arch" {
-  description = "The Talos architecture list"
+  description = "The Talos vm architectures for oracle vm image creation."
   type        = list(string)
   default     = ["amd64", "arm64"]
+}
+variable "wg_kubelet_subnet" {
+  description = "the k8s kubelet subnet used to specify the kubelet ip address, it allows the controlplane to use wg ip addresses."
+  type = string
+  default = "10.10.0.0/24"
+}
+variable "site" {
+  description = "The wireguard mesh network configs."
+  default = {
+    "controlplane" = {
+      egress_endpoint = "127.0.0.1:51820"
+      endpoint = "controlpane.example-domain.com:51820" #The url where it's peers are supposed to reach it, will be modified to take ip address if null
+      listen_port = 51820
+      addresses = ["10.10.0.1/24"]
+      allowedIPs = ["10.10.0.0/24"]
+      peers = ["home"]
+    }
+    "home" = {
+      ingress_tunnel = true
+      endpoint = "192.168.1.4:51821" 
+      listen_port = 51821
+      addresses = ["10.10.0.101/24"]
+      allowedIPs = ["10.10.0.101/32"]
+      peers = ["controlplane"]
+    }
+  }
+  type = map(object({
+    egress_endpoint = optional(string)
+    ingress_tunnel = optional(bool,false)
+    endpoint = optional(string)
+    listen_port = optional(number)
+    addresses = list(string)
+    allowedIPs = list(string)
+    peers = list(string)
+    private_key = optional(string)
+    public_key = optional(string)
+  }))
+}
+variable "bootstrap_nodes" {
+  type = bool
+  default = true
 }

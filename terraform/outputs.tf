@@ -1,3 +1,6 @@
-output "control_plane_ip" {
-  value = [oci_core_instance.talos_controlplane.public_ip]
+output "images" {
+  value = module.images.images
+}
+output "oracle_ip_addresses" {
+  value = module.oracle.nodes
 }

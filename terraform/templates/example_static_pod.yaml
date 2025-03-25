@@ -1,0 +1,12 @@
+machine:
+  pods:
+    - apiVersion: v1
+      kind: Pod
+      metadata: 
+        name: ${pod_name}
+      spec:
+        restartPolicy: Never
+        containers:
+          - name: ${container_name}
+            image: ${image}
+            command: ["/bin/sh", "-c", "${command}"]

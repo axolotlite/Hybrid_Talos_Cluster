@@ -5,6 +5,15 @@ Talos has built-in wireguard, which under normal circumstances would be enough t
 
 This is the initial commit, I plan to refactor everything and clean it up. Then further document this project.
 
+bandwidth for each vm:
+VM.Standard.E2.1.Micro
+Always Free-eligible
+Virtual machine, 1 core OCPU, 1 GB memory, 0.48 Gbps network bandwidth
+
+VM.Standard.A1.Flex
+Always Free-eligible
+Virtual machine, 4 core OCPU, 24 GB memory, 4 Gbps network bandwidth
+1gbps per core
 
 ## Special Thanks to the writers of these Repos and Articles that I've read through / used code from!
 https://www.talos.dev/  
@@ -17,3 +26,5 @@ https://shadynagy.com/setting-up-vpn-using-wiresock-with-ubuntu-windows/
 https://techoverflow.net/2021/07/09/what-does-wireguard-allowedips-actually-do/  
 https://dev.to/netikras/kubernetes-on-vpn-wireguard-152l  
 https://github.com/OJFord/terraform-provider-wireguard  
+https://metallb.universe.tf/installation/  
+https://blogs.oracle.com/ateam/post/oci-networking-best-practices-recommendations-and-tips---part-one---general-oci-networking  

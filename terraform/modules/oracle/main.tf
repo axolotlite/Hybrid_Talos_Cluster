@@ -1,9 +1,4 @@
-locals {
-  cloud_nodes = {
-    for name,node in var.nodes: name => node
-    if node.type == "cloud"
-  }
-}
+
 ## Talos Image
 resource "random_id" "bucket" {
   byte_length = 8
@@ -128,15 +123,15 @@ resource "oci_core_subnet" "this" {
 
 ## VM
 resource "oci_core_instance" "nodes" {
-  for_each = local.cloud_nodes
+  for_each = var.nodes
   availability_domain = data.oci_identity_availability_domain.ad.name
   compartment_id      = var.compartment_ocid
   display_name        = each.key
-  shape               = each.value.shape.instance_shape
+  shape               = each.value.instance_shape
 
   shape_config {
-    ocpus         = each.value.shape.ocpus
-    memory_in_gbs = each.value.shape.memory_in_gbs
+    ocpus         = each.value.ocpus
+    memory_in_gbs = each.value.memory_in_gbs
   }
 
   create_vnic_details {
