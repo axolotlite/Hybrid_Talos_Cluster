@@ -1,0 +1,26 @@
+controller:
+  ingressClassResource:
+    name: internal-nginx
+    controllerValue: "k8s.io/internal-nginx"
+  admissionWebhooks:
+    create: true
+    patch:
+      enabled: true
+      name: internal-webhook
+    # Restrict webhook to "internal" class
+    objectSelector:
+      matchExpressions:
+        - key: class
+          operator: In
+          values: [internal-nginx]
+  service:
+    enabled: true
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: type
+                operator: In
+                values:
+                  - prem

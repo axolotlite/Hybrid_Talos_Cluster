@@ -1,0 +1,39 @@
+controller:
+  ingressClassResource:
+    name: external-nginx
+    controllerValue: k8s.io/external-nginx
+  admissionWebhooks:
+    create: true
+    patch:
+      enabled: true
+      name: external-webhook
+    # Restrict webhook to "external" class
+    objectSelector:
+      matchExpressions:
+        - key: class
+          operator: In
+          values: [external-nginx]
+  service:
+    enabled: false
+  allowSnippetAnnotations: true
+  config: 
+    annotations-risk-level: critical
+  hostNetwork: true
+  hostPort:
+    enabled: false
+    ports:
+      http: 80
+      https: 443
+  dnsPolicy: ClusterFirstWithHostNet
+  publishService:
+    enabled: false
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: type
+                operator: In
+                values:
+                  - ingress
+                  - cloud
