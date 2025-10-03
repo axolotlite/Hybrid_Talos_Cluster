@@ -1,19 +1,10 @@
 # Hybrid Talos Cluster
-Using Oracle always-free vms to create a k8s controlplane, plus two vms behind a NAT using TalosOS.
+Using Hetzner cloud and TalosOS to create a Secure Hybrid Kubernetes cluster through wireguard tunnel.
 
-Talos has built-in wireguard, which under normal circumstances would be enough to bypass the NAT wall between the nodes and the controlplane, however, I opted to add a tunnel between the nodes to avoid VPN blocking.
+README Update TBD
 
-This is the initial commit, I plan to refactor everything and clean it up. Then further document this project.
-
-bandwidth for each vm:
-VM.Standard.E2.1.Micro
-Always Free-eligible
-Virtual machine, 1 core OCPU, 1 GB memory, 0.48 Gbps network bandwidth
-
-VM.Standard.A1.Flex
-Always Free-eligible
-Virtual machine, 4 core OCPU, 24 GB memory, 4 Gbps network bandwidth
-1gbps per core
+## You can create a key for wstunnel using:
+`openssl rand -base64 42 | tr -d '\n='`
 
 ## Special Thanks to the writers of these Repos and Articles that I've read through / used code from!
 https://www.talos.dev/  
@@ -28,3 +19,9 @@ https://dev.to/netikras/kubernetes-on-vpn-wireguard-152l
 https://github.com/OJFord/terraform-provider-wireguard  
 https://metallb.universe.tf/installation/  
 https://blogs.oracle.com/ateam/post/oci-networking-best-practices-recommendations-and-tips---part-one---general-oci-networking  
+https://github.com/piraeusdatastore/piraeus-operator/blob/v2/docs/how-to/talos.md  
+https://github.com/hcloud-talos/terraform-hcloud-talos    
+https://longhorn.io/kb/tip-only-use-storage-on-a-set-of-nodes/
+https://devopscube.com/create-a-new-account-in-argo-cd/
+https://medium.com/@vdboor/using-nginx-ingress-as-a-static-cache-91bc27be04a1
+https://stackoverflow.com/questions/62245119/ingress-nginx-cache

@@ -18,15 +18,25 @@ controller:
   allowSnippetAnnotations: true
   config: 
     annotations-risk-level: critical
-  hostNetwork: true
+  hostNetwork: false
   hostPort:
-    enabled: false
+    enabled: true
     ports:
       http: 80
       https: 443
   dnsPolicy: ClusterFirstWithHostNet
+  extraVolumes:
+    - name: nginx-cache
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: nginx-cache
+      mountPath: /tmp/nginx-cache
   publishService:
     enabled: false
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:

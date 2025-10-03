@@ -1,0 +1,14 @@
+%{ for name, config in volumes ~}
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: ${name}
+provisioning:
+  diskSelector:
+    match: ${config.match}
+  grow: ${ lookup(config, "grow", true) }
+  maxSize: ${config.max_size}
+  minSize: ${ lookup(config, "minSize", "150GB") }
+filesystem:
+  type: ${ lookup(config, "fs", "xfs") }
+%{ endfor ~}
